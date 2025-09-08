@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+<button onclick="(function(){document.querySelector('input').click()})()">Open</button>
+<button onclick="(function(){confirm('By Pressing Ok This Will Erase All Your Work Unless You Saved It')? (document.querySelector('textarea').value = '', document.querySelector('#frame').src = 'about:blank') : ''})()">New</button>
+<button onclick="save()">Save</button>
+<button onclick="(function(){window.open(document.querySelector('#frame').src)})()">Preview</button>
+<h2>HTML Editor - By idislikebluecheese</h2>
+</header>
+<input accept="text/html" type="file" style="display:none">
+<div id="container">
+<textarea></textarea>
+<iframe id="frame"></iframe>
+</div>
+</body>
+</html>
+<script>
+document.querySelector("textarea").value = ''
+document.querySelector("#frame").src = "about:blank"
+    async function save(){
+     var link = document.createElement("a")
+     let blobcontent = ['']
+     blobcontent[0] = document.querySelector("textarea").value
+     const blob = new Blob(blobcontent, {type:"text/html"})
+     const url = await URL.createObjectURL(blob)
+     link.href = url
+     link.download = String(prompt("What Would You Like TO Name You Save File") + '.html')
+     document.body.appendChild(link)
+     link.click()
+     document.body.removeChild(link)
+    }
+    document.querySelector("input").addEventListener("change", (e) => {
+        const file = e.target.files[0]
+        const url = URL.createObjectURL(file)
+        document.querySelector("#frame").src = url
+        const reader = new FileReader()
+        reader.onload = async function(e){
+        var result = e.target.result
+        document.querySelector("textarea").value = result
+        }
+        reader.readAsText(file)
+    })
+    document.querySelector("textarea").addEventListener("change", (e) => {
+        let blobcontent = ['']
+        blobcontent[0] = document.querySelector("textarea").value
+        const blob = new Blob(blobcontent, {type:"text/html"})
+        const url = URL.createObjectURL(blob)
+        document.querySelector("#frame").src = url
+        })
+</script>
+<style>
+*  {
+    font-family: Noto Sans;
+}
+body {
+    margin:0;
+}
+#container {
+      display: flex;
+      flex-direction: column;
+      height: 92vh;
+      float:bottom;
+      margin-top:8vh
+}
+textarea {
+flex:1;
+color:white;
+background-color:#444444;
+border:none
+}
+#frame {
+flex:1;
+border:none
+}
+button {
+    background-color: #2da3d1;
+    border-radius:1px;
+    border:none;
+    height: 4vh;
+    width:6vh;
+    color:whitesmoke;
+    margin-top:2vh;
+    padding:0vh;
+    font-size: 1.67vh; /* IT SAYS 67!!!! */
+    transition: 500ms;
+}
+button:hover {
+    background-color:#064158
+}
+header {
+    height: 8.5vh;
+    width: 100%;
+    background-color: #222222;
+    position: absolute;
+    margin-top: -8vh;
+}
+header h2 {
+    text-align: right;
+    position:inline;
+    margin-top:-4vh;
+    margin-right:2vh;
+    color:white
+}
+</style>
