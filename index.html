@@ -7,36 +7,59 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
+<dialog>
+    <h2>Settings</h2>
+    <input type="color" id="color1">
+    <input type="color" id="color2">
+    <button class="selector" onclick="(function(){document.querySelector('#color1').click()})()" id="picker1" style="background-color: #444444;"></button><label>Text Editor background</label>
+    <button class="selector" onclick="(function(){document.querySelector('#color2').click()})()" id="picker2" style="background-color: #ffffff;"></button><label>Text Editor test</label>
+</dialog>
 <header>
-<button onclick="(function(){document.querySelector('input').click()})()">Open</button>
+<button onclick="(function(){document.querySelector('input[type=file]').click()})()">Open</button>
 <button onclick="(function(){confirm('By Pressing Ok This Will Erase All Your Work Unless You Saved It')? (document.querySelector('textarea').value = '', document.querySelector('#frame').src = 'about:blank') : ''})()">New</button>
-<button onclick="save()">Save</button>
-<button onclick="(function(){window.open(document.querySelector('#frame').src)})()">Preview</button>
+<button onclick="(function(){document.querySelector('#frame').src == 'about:blank'? window.alert('You can save a blank page') : save()})()">Save</button>
+<button onclick="(function(){window.open(document.querySelector('#frame').src)})()" style="font-size: 1.5vh;">Preview</button>
+<button style="font-size: 1.5vh;" onclick="(function(){document.querySelector('dialog').style.display == 'none'? document.querySelector('dialog').style.display = 'block' : document.querySelector('dialog').style.display = 'none'})()">Settings</button>
 <h2>HTML Editor - By idislikebluecheese</h2>
 </header>
 <input accept="text/html" type="file" style="display:none">
 <div id="container">
-<textarea></textarea>
+<textarea spellcheck="false"></textarea>
 <iframe id="frame"></iframe>
 </div>
 </body>
 </html>
 <script>
 document.querySelector("textarea").value = ''
+document.querySelector('dialog').style.display = 'none'
 document.querySelector("#frame").src = "about:blank"
-    async function save(){
+document.querySelector("#color1").value = '#444444'
+document.querySelector('#color2').value = '#ffffff'
+window.addEventListener("beforeunload", (e)=>{
+    document.querySelector('textarea').value != ''? e.preventDefault() : null
+})
+for(let i = 0; i<document.querySelectorAll('input[type=color]').length;i++){
+  let values = ["document.querySelector(`textarea`).style = `background-color:${e.target.value};color:${document.querySelector('#color2').value}`","document.querySelector(`textarea`).style = `background-color:${document.querySelector('#color1').value};color:${e.target.value}`"]
+  document.querySelectorAll('input[type=color]')[i].addEventListener("input", (e)=>{document.getElementById(`picker${e.target.id[5]}`).style = `background-color:${e.target.value}`;eval(values[i])}) 
+}
+async function save(){
      var link = document.createElement("a")
      let blobcontent = ['']
      blobcontent[0] = document.querySelector("textarea").value
      const blob = new Blob(blobcontent, {type:"text/html"})
      const url = await URL.createObjectURL(blob)
      link.href = url
-     link.download = String(prompt("What Would You Like TO Name You Save File") + '.html')
+     let prmpt = prompt("What Would You Like TO Name You Save File")
+     //link.download = String(prmpt)
+     while(prmpt == '' || prmpt.includes('.')){
+        prmpt = prompt("Invalid file name, Choose a new one")
+     }
+     link.download = String(prmpt)
      document.body.appendChild(link)
      link.click()
      document.body.removeChild(link)
     }
-    document.querySelector("input").addEventListener("change", (e) => {
+    document.querySelector("input[type=file]").addEventListener("input", (e) => {
         const file = e.target.files[0]
         const url = URL.createObjectURL(file)
         document.querySelector("#frame").src = url
@@ -47,7 +70,7 @@ document.querySelector("#frame").src = "about:blank"
         }
         reader.readAsText(file)
     })
-    document.querySelector("textarea").addEventListener("change", (e) => {
+    document.querySelector("textarea").addEventListener("input", (e) => {
         let blobcontent = ['']
         blobcontent[0] = document.querySelector("textarea").value
         const blob = new Blob(blobcontent, {type:"text/html"})
@@ -91,7 +114,7 @@ button {
     font-size: 1.67vh; /* IT SAYS 67!!!! */
     transition: 500ms;
 }
-button:hover {
+header button:hover {
     background-color:#064158
 }
 header {
@@ -107,5 +130,37 @@ header h2 {
     margin-top:-4vh;
     margin-right:2vh;
     color:white
+}
+dialog {
+    width:70vh;
+    height:400px;
+    margin-top:6.7vh;
+    backdrop-filter: blur(25px) saturate(119%);
+    -webkit-backdrop-filter: blur(25px) saturate(119%);
+    background-color: #121824b5;
+    border-radius: 12px;
+    border: 1px solid #ffffff20;
+    color:white
+}
+input[type=color] {
+    display:none
+}
+.selector {
+    width:2.5vh;
+    height:2.5vh;
+    border-radius:0.3vh;
+    cursor:pointer;
+    appearance: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    display: block;
+}
+dialog label {
+    font-size: 2vh;
+    display: inline-block;
+}
+dialog h2 {
+    text-align: center;
+    display: flex;
 }
 </style>
